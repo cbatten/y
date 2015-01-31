@@ -20,12 +20,9 @@ input_values.extend( [0]*3 )
 model = RegIncr()
 model.elaborate()
 
-# Create a simulator using simulation tool
+# Create and reset simulator
 
 sim = SimulationTool( model )
-
-# Reset simulator
-
 sim.reset()
 
 # Apply input values and display output values
