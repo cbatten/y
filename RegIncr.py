@@ -1,8 +1,8 @@
 #=========================================================================
-# RegIncrFlat
+# RegIncr
 #=========================================================================
-# This is a simple flat model for a registered incrementer. An eight-bit
-# value is read from the input port, registered, incremented by two, and
+# This is a simple model for a registered incrementer. An eight-bit value
+# is read from the input port, registered, incremented by one, and
 # finally written to the output port.
 
 from pymtl import *
@@ -29,17 +29,9 @@ class RegIncrFlat( Model ):
       else:
         s.reg_out.next = s.in_
 
-    # Concurrent block modeling first incrementer
-
-    s.temp = Wire( Bits(8) )
+    # Concurrent block modeling incrementer
 
     @s.combinational
     def block2():
-      s.temp.value = s.reg_out + 1
-
-    # Concurrent block modeling second incrementer
-
-    @s.combinational
-    def block3():
-      s.out.value = s.temp + 1
+      s.out.value = s.reg_out + 1
 
