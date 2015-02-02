@@ -22,7 +22,6 @@ def test_basic( dump_vcd ):
 
   sim = SimulationTool( model )
   sim.reset()
-  sim.reset()
   print ""
 
   # Helper function
