@@ -14,7 +14,7 @@ def test_basic( dump_vcd ):
 
   # Elaborate the model
 
-  model = RegIncrFlat()
+  model = RegIncr()
   model.vcd_file = dump_vcd
   model.elaborate()
 
@@ -49,14 +49,12 @@ def test_basic( dump_vcd ):
 
     sim.cycle()
 
-  # Test cases
+  # Cycle-by-cycle tests
 
   t( 0x00, '?'  )
   t( 0x13, 0x01 )
   t( 0x27, 0x14 )
-  t( 0xfe, 0x28 )
-  t( 0xff, 0xff )
-  t( 0x00, 0x00 )
-  t( 0x00, 0x00 )
-  t( 0x00, 0x00 )
+  t( 0x00, 0x28 )
+  t( 0x00, 0x01 )
+  t( 0x00, 0x01 )
 
