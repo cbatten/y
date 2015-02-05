@@ -32,16 +32,16 @@ def mk_test_vector_table( nstages, inputs ):
 #-------------------------------------------------------------------------
 
 test_case_table = mk_test_case_table([
-    (                    "nstages inputs                "),
-    [ "2stage_small",    2,       [ 0x00, 0x03, 0x06 ]   ],
-    [ "2stage_large",    2,       [ 0xa0, 0xb3, 0xc6 ]   ],
-    [ "2stage_overflow", 2,       [ 0x00, 0xfe, 0xff ]   ],
-    [ "2stage_random",   2,       sample(range(0xff),20) ],
-    [ "3stage_small",    3,       [ 0x00, 0x03, 0x06 ]   ],
-    [ "3stage_large",    3,       [ 0xa0, 0xb3, 0xc6 ]   ],
-    [ "3stage_overflow", 3,       [ 0x00, 0xfe, 0xff ]   ],
-    [ "3stage_random",   3,       sample(range(0xff),20) ],
-  ])
+  (                    "nstages inputs                "),
+  [ "2stage_small",    2,       [ 0x00, 0x03, 0x06 ]   ],
+  [ "2stage_large",    2,       [ 0xa0, 0xb3, 0xc6 ]   ],
+  [ "2stage_overflow", 2,       [ 0x00, 0xfe, 0xff ]   ],
+  [ "2stage_random",   2,       sample(range(0xff),20) ],
+  [ "3stage_small",    3,       [ 0x00, 0x03, 0x06 ]   ],
+  [ "3stage_large",    3,       [ 0xa0, 0xb3, 0xc6 ]   ],
+  [ "3stage_overflow", 3,       [ 0x00, 0xfe, 0xff ]   ],
+  [ "3stage_random",   3,       sample(range(0xff),20) ],
+])
 
 @pytest.mark.parametrize( **test_case_table )
 def test( test_params, dump_vcd ):
