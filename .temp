@@ -1,57 +1,55 @@
-//----------------------------------------------------------------------
-// State Outputs
-//----------------------------------------------------------------------
+#=========================================================================
+# GCD Unit RTL Datapath
+#=========================================================================
 
-localparam a_x   = 2'dx;
-localparam a_ld  = 2'd0;
-localparam a_b   = 2'd1;
-localparam a_sub = 2'd2;
+class GcdUnitDpathRTL (Model):
 
-localparam b_x   = 1'dx;
-localparam b_ld  = 1'd0;
-localparam b_a   = 1'd1;
+  # Constructor
 
-task set_cs
-(
-  input logic       cs_req_rdy,
-  input logic       cs_resp_val,
-  input logic [1:0] cs_a_mux_sel,
-  input logic       cs_a_reg_en,
-  input logic       cs_b_mux_sel,
-  input logic       cs_b_reg_en
-);
-begin
-  req_rdy      = cs_req_rdy;
-  resp_val     = cs_resp_val;
-  cs.a_reg_en  = cs_a_reg_en;
-  cs.b_reg_en  = cs_b_reg_en;
-  cs.a_mux_sel = cs_a_mux_sel;
-  cs.b_mux_sel = cs_b_mux_sel;
-end
-endtask
+  def __init__( s ):
 
-// Labels for Mealy transistions
+    #---------------------------------------------------------------------
+    # Interface
+    #---------------------------------------------------------------------
 
-logic do_swap;
-logic do_sub;
+    s.req_msg_a  = InPort  (16)
+    s.req_msg_b  = InPort  (16)
+    s.resp_msg   = OutPort (16)
 
-assign do_swap = ss.is_a_lt_b;
-assign do_sub  = !ss.is_b_zero;
+    # Control signals (ctrl -> dpath)
 
-// Set outputs using a control signal "table"
+    s.a_mux_sel = InPort  (A_MUX_SEL_NBITS)
+    s.a_reg_en  = InPort  (1)
+    s.b_mux_sel = InPort  (B_MUX_SEL_NBITS)
+    s.b_reg_en  = InPort  (1)
 
-always @(*) begin
+    # Status signals (dpath -> ctrl)
 
-  set_cs( 0, 0, a_x, 0, b_x, 0 );
-  case ( state_reg )
-    //                                 req resp a mux  a  b mux b
-    //                                 rdy val  sel    en sel   en
-    STATE_IDLE:                set_cs( 1,  0,   a_ld,  1, b_ld, 1 );
-    STATE_CALC: if ( do_swap ) set_cs( 0,  0,   a_b,   1, b_a,  1 );
-           else if ( do_sub  ) set_cs( 0,  0,   a_sub, 1, b_x,  0 );
-    STATE_DONE:                set_cs( 0,  1,   a_x,   0, b_x,  0 );
+    s.is_b_zero = OutPort (1)
+    s.is_a_lt_b = OutPort (1)
 
-  endcase
+    #---------------------------------------------------------------------
+    # Structural composition
+    #---------------------------------------------------------------------
 
-end
+    # A mux
+
+    s.sub_out   = Wire(16)
+    s.b_reg_out = Wire(16)
+
+    s.a_mux = m = Mux( 16, 3 )
+    s.connect_dict({
+      m.sel                  : s.a_mux_sel,
+      m.in_[ A_MUX_SEL_IN  ] : s.req_msg_a,
+      m.in_[ A_MUX_SEL_SUB ] : s.sub_out,
+      m.in_[ A_MUX_SEL_B   ] : s.b_reg_out,
+    })
+
+    # A register
+
+    s.a_reg = m = RegEn(16)
+    s.connect_dict({
+      m.en    : s.a_reg_en,
+      m.in_   : s.a_mux.out,
+    })
 
