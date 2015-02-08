@@ -7,7 +7,7 @@
 
 from pymtl import *
 
-class RegIncrFlat( Model ):
+class RegIncr( Model ):
 
   # Constructor
 
